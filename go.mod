@@ -1,4 +1,4 @@
-module github.com/tanush-128/openzo_backend/store
+module github.com/tanush-128/openzo_backend/ad
 
 go 1.21.6
 

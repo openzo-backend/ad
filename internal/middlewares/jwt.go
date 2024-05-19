@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/tanush-128/openzo_backend/store/internal/pb"
+	"github.com/tanush-128/openzo_backend/ad/internal/pb"
 )
 
 type User struct {

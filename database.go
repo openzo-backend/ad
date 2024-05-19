@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/tanush-128/openzo_backend/store/config"
-	"github.com/tanush-128/openzo_backend/store/internal/models"
+	"github.com/tanush-128/openzo_backend/ad/config"
+	"github.com/tanush-128/openzo_backend/ad/internal/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -30,6 +30,6 @@ func connectToDB(cfg *config.Config) (*gorm.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database connection: %w", err)
 	}
-	db.Migrator().AutoMigrate(&models.Store{})
+	db.Migrator().AutoMigrate(&models.Ad{})
 	return db, nil
 }

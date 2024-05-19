@@ -2,40 +2,37 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/tanush-128/openzo_backend/store/internal/models"
-	"github.com/tanush-128/openzo_backend/store/internal/pb"
-	"github.com/tanush-128/openzo_backend/store/internal/repository"
-	"github.com/tanush-128/openzo_backend/store/internal/utils"
+	"github.com/tanush-128/openzo_backend/ad/internal/models"
+	"github.com/tanush-128/openzo_backend/ad/internal/pb"
+	"github.com/tanush-128/openzo_backend/ad/internal/repository"
+	"github.com/tanush-128/openzo_backend/ad/internal/utils"
 )
 
-type StoreService interface {
+type AdService interface {
 
 	//CRUD
-	CreateStore(ctx *gin.Context, req models.Store) (models.Store, error)
-	GetStoreByID(ctx *gin.Context, id string) (models.Store, error)
-	GetStoresByPincode(ctx *gin.Context, pincode string) ([]models.Store, error)
-	GetStoresByPincodeAndCategory(ctx *gin.Context, pincode string, category string) ([]models.Store, error)
-	GetStoreByPhoneNo(ctx *gin.Context, phoneNo string) (models.Store, error)
-	GetCategories(ctx *gin.Context) ([]string, error)
-	UpdateStore(ctx *gin.Context, req models.Store) (models.Store, error)
+	CreateAd(ctx *gin.Context, req models.Ad) (models.Ad, error)
+	GetAdByID(ctx *gin.Context, id string) (models.Ad, error)
+	GetAdsByPincode(ctx *gin.Context, pincode string) ([]models.Ad, error)
+
 }
 
-type storeService struct {
-	storeRepository repository.StoreRepository
+type adService struct {
+	adRepository repository.AdRepository
 	imageClient     pb.ImageServiceClient
 }
 
-func NewStoreService(storeRepository repository.StoreRepository,
+func NewAdService(adRepository repository.AdRepository,
 	imageClient pb.ImageServiceClient,
-) StoreService {
-	return &storeService{storeRepository: storeRepository, imageClient: imageClient}
+) AdService {
+	return &adService{adRepository: adRepository, imageClient: imageClient}
 }
 
-func (s *storeService) CreateStore(ctx *gin.Context, req models.Store) (models.Store, error) {
+func (s *adService) CreateAd(ctx *gin.Context, req models.Ad) (models.Ad, error) {
 
 	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB
 	if err != nil {
-		return models.Store{}, err
+		return models.Ad{}, err
 	}
 
 	file, err := ctx.FormFile("image")
@@ -43,63 +40,23 @@ func (s *storeService) CreateStore(ctx *gin.Context, req models.Store) (models.S
 
 		imageBytes, err := utils.FileHeaderToBytes(file)
 		if err != nil {
-			return models.Store{}, err
+			return models.Ad{}, err
 		}
 
 		Image, err := s.imageClient.UploadImage(ctx, &pb.ImageMessage{
 			ImageData: imageBytes,
 		})
 		if err != nil {
-			return models.Store{}, err
+			return models.Ad{}, err
 		}
 
 		req.Image = Image.Url
 	}
-	createdStore, err := s.storeRepository.CreateStore(req)
+	createdAd, err := s.adRepository.CreateAd(req)
 	if err != nil {
-		return models.Store{}, err // Propagate error
+		return models.Ad{}, err // Propagate error
 	}
 
-	return createdStore, nil
+	return createdAd, nil
 }
 
-func (s *storeService) UpdateStore(ctx *gin.Context, req models.Store) (models.Store, error) {
-
-	err := ctx.Request.ParseMultipartForm(10 << 20) // 10 MB
-	if err != nil {
-		return models.Store{}, err
-	}
-
-	store, err := s.storeRepository.GetStoreByID(req.ID)
-
-	if err != nil {
-		return models.Store{}, err
-	}
-
-	req.Image = store.Image
-
-	file, err := ctx.FormFile("image")
-	if err == nil {
-
-		imageBytes, err := utils.FileHeaderToBytes(file)
-		if err != nil {
-			return models.Store{}, err
-		}
-
-		Image, err := s.imageClient.UploadImage(ctx, &pb.ImageMessage{
-			ImageData: imageBytes,
-		})
-		if err != nil {
-			return models.Store{}, err
-		}
-
-		req.Image = Image.Url
-	}
-
-	updatedStore, err := s.storeRepository.UpdateStore(req)
-	if err != nil {
-		return models.Store{}, err
-	}
-
-	return updatedStore, nil
-}
