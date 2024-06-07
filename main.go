@@ -30,7 +30,6 @@ func main() {
 		log.Fatal(fmt.Errorf("failed to connect to database: %w", err))
 	}
 
-
 	imageConn, err := grpc.Dial(cfg.ImageGrpc, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -48,7 +47,7 @@ func main() {
 
 	router.GET("ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "pong",
+			"message": "pong ads",
 		})
 	})
 

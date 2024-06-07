@@ -6,8 +6,8 @@ import (
 
 type Ad struct {
 	ID string `json:"id"`
-
 	StoreID   string    `json:"store_id"`
+	Pincode   string    `json:"pincode"`
 	Name      string    `json:"name"`
 	URL       string    `json:"url"`
 	Image     string    `json:"image"`

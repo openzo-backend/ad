@@ -21,9 +21,9 @@ func (h *Handler) CreateAd(ctx *gin.Context) {
 	var ad models.Ad
 
 	ad.Name = ctx.PostForm("name")
-	ad.Name = ctx.PostForm("name")
 	ad.URL = ctx.PostForm("url")
 	ad.StoreID = ctx.PostForm("store_id")
+	ad.Pincode = ctx.PostForm("pincode")
 	ad.ExpiresAt = utils.StringToTime(ctx.PostForm("expires_at"))
 
 	createdAd, err := h.adService.CreateAd(ctx, ad)
@@ -48,7 +48,6 @@ func (h *Handler) GetAdByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, ad)
 }
 
-
 func (h *Handler) GetAdsByPincode(ctx *gin.Context) {
 	pincode := ctx.Param("pincode")
 
@@ -60,5 +59,3 @@ func (h *Handler) GetAdsByPincode(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, ads)
 }
-
-
